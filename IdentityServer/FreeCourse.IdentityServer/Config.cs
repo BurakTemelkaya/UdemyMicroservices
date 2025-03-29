@@ -8,7 +8,7 @@ public static class Config
     public static IEnumerable<ApiResource> ApiResources =>
         [
             new("resource_catalog"){ Scopes = { "catalog_fullpermission" } },
-            new("resource_photo_stock_catalog"){ Scopes = { "photo_stock_fullpermission" } },
+            new("resource_photo_stock"){ Scopes = { "photo_stock_fullpermission" } },
             new(IdentityServerConstants.LocalApi.ScopeName),
         ];
 

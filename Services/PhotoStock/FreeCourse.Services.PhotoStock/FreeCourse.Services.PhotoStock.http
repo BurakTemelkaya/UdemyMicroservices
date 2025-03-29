@@ -1,0 +1,6 @@
+@FreeCourse.Services.PhotoStock_HostAddress = http://localhost:5171
+
+GET {{FreeCourse.Services.PhotoStock_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

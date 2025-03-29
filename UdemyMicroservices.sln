@@ -22,6 +22,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IdentityServer", "IdentityS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreeCourse.IdentityServer", "IdentityServer\FreeCourse.IdentityServer\FreeCourse.IdentityServer.csproj", "{8FB5AC7C-0625-A286-A14C-514F2E63D009}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PhotoStock", "PhotoStock", "{3B9F8093-4FA8-40F3-9897-AA39940ED723}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreeCourse.Services.PhotoStock", "Services\PhotoStock\FreeCourse.Services.PhotoStock\FreeCourse.Services.PhotoStock.csproj", "{5A7E2C41-3E1E-4CEC-8323-E31228E30E51}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +44,10 @@ Global
 		{8FB5AC7C-0625-A286-A14C-514F2E63D009}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8FB5AC7C-0625-A286-A14C-514F2E63D009}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8FB5AC7C-0625-A286-A14C-514F2E63D009}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A7E2C41-3E1E-4CEC-8323-E31228E30E51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A7E2C41-3E1E-4CEC-8323-E31228E30E51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A7E2C41-3E1E-4CEC-8323-E31228E30E51}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A7E2C41-3E1E-4CEC-8323-E31228E30E51}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -49,6 +57,8 @@ Global
 		{1A0EA73E-6482-492A-86C1-F8FC2F663BB5} = {FB794C34-5F4F-4B3C-B48B-837F9B0FD15D}
 		{2E004DAE-5C54-45B8-95A0-539CE0E6FA9F} = {32BF8B43-3A49-4B7A-94A8-4F9A5695A63E}
 		{8FB5AC7C-0625-A286-A14C-514F2E63D009} = {CEAB3C9E-AE24-40BF-B504-4D3A8F5AEFB7}
+		{3B9F8093-4FA8-40F3-9897-AA39940ED723} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{5A7E2C41-3E1E-4CEC-8323-E31228E30E51} = {3B9F8093-4FA8-40F3-9897-AA39940ED723}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B0777223-FF16-4E7B-B836-0C257A6FBB4C}
