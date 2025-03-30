@@ -9,6 +9,7 @@ public static class Config
         [
             new("resource_catalog"){ Scopes = { "catalog_fullpermission" } },
             new("resource_photo_stock"){ Scopes = { "photo_stock_fullpermission" } },
+            new("resource_basket"){ Scopes = { "basket_fullpermission" } },
             new(IdentityServerConstants.LocalApi.ScopeName),
         ];
 
@@ -29,6 +30,7 @@ public static class Config
         [
             new("catalog_fullpermission", "Catalog API için full eriþim"),
             new("photo_stock_fullpermission", "Photo Stock API için full eriþim"),
+            new("basket_fullpermission", "Basket API için full eriþim"),
             new(IdentityServerConstants.LocalApi.ScopeName),
         ];
 
@@ -47,7 +49,7 @@ public static class Config
                 AllowOfflineAccess = true,
                 ClientSecrets= { new Secret("secret".Sha256()) },
                 AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
-                AllowedScopes = {IdentityServerConstants.StandardScopes.Email, IdentityServerConstants.StandardScopes.OpenId, IdentityServerConstants.StandardScopes.Profile, IdentityServerConstants.StandardScopes.OfflineAccess, IdentityServerConstants.LocalApi.ScopeName,"roles"},
+                AllowedScopes = {"basket_fullpermission", IdentityServerConstants.StandardScopes.Email, IdentityServerConstants.StandardScopes.OpenId, IdentityServerConstants.StandardScopes.Profile, IdentityServerConstants.StandardScopes.OfflineAccess, IdentityServerConstants.LocalApi.ScopeName,"roles"},
                 AccessTokenLifetime= 1*60*60,
                 RefreshTokenExpiration= TokenExpiration.Absolute,
                 AbsoluteRefreshTokenLifetime= (int)(DateTime.Now.AddDays(60)-DateTime.Now).TotalSeconds,
