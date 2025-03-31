@@ -30,6 +30,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Basket", "Basket", "{7B9980
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreeCourse.Services.Basket", "Services\Basket\FreeCourse.Services.Basket\FreeCourse.Services.Basket.csproj", "{9C38B0DB-EF00-4CFB-BEE1-207105C25F1C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Discount", "Discount", "{891B0740-9464-4296-963E-1FD2D5E0DA43}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreeCourse.Services.Discount", "Services\Dİscount\FreeCourse.Services.Discount\FreeCourse.Services.Discount.csproj", "{6A362F3B-DBF8-4C99-B72C-B868F7037CAB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,6 +60,10 @@ Global
 		{9C38B0DB-EF00-4CFB-BEE1-207105C25F1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C38B0DB-EF00-4CFB-BEE1-207105C25F1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9C38B0DB-EF00-4CFB-BEE1-207105C25F1C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A362F3B-DBF8-4C99-B72C-B868F7037CAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A362F3B-DBF8-4C99-B72C-B868F7037CAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A362F3B-DBF8-4C99-B72C-B868F7037CAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A362F3B-DBF8-4C99-B72C-B868F7037CAB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -69,6 +77,8 @@ Global
 		{5A7E2C41-3E1E-4CEC-8323-E31228E30E51} = {3B9F8093-4FA8-40F3-9897-AA39940ED723}
 		{7B998096-98B2-4132-BB44-01D2E39E0E77} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{9C38B0DB-EF00-4CFB-BEE1-207105C25F1C} = {7B998096-98B2-4132-BB44-01D2E39E0E77}
+		{891B0740-9464-4296-963E-1FD2D5E0DA43} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{6A362F3B-DBF8-4C99-B72C-B868F7037CAB} = {891B0740-9464-4296-963E-1FD2D5E0DA43}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B0777223-FF16-4E7B-B836-0C257A6FBB4C}
