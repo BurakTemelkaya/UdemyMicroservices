@@ -12,6 +12,7 @@ public static class Config
             new("resource_basket"){ Scopes = { "basket_fullpermission" } },
             new("resource_discount"){ Scopes = { "discount_fullpermission" } },
             new("resource_order"){ Scopes = { "order_fullpermission" } },
+            new("resource_payment"){ Scopes = { "payment_fullpermission" } },
             new(IdentityServerConstants.LocalApi.ScopeName),
         ];
 
@@ -35,6 +36,7 @@ public static class Config
             new("basket_fullpermission", "Basket API için full eriþim"),
             new("discount_fullpermission", "Discount API için full eriþim"),
             new("order_fullpermission", "Order API için full eriþim"),
+            new("payment_fullpermission", "Payment API için full eriþim"),
             new(IdentityServerConstants.LocalApi.ScopeName),
         ];
 
@@ -53,7 +55,7 @@ public static class Config
                 AllowOfflineAccess = true,
                 ClientSecrets= { new Secret("secret".Sha256()) },
                 AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
-                AllowedScopes = {"basket_fullpermission", "discount_fullpermission", "order_fullpermission", IdentityServerConstants.StandardScopes.Email, IdentityServerConstants.StandardScopes.OpenId, IdentityServerConstants.StandardScopes.Profile, IdentityServerConstants.StandardScopes.OfflineAccess, IdentityServerConstants.LocalApi.ScopeName,"roles"},
+                AllowedScopes = {"basket_fullpermission", "discount_fullpermission", "order_fullpermission", "payment_fullpermission", IdentityServerConstants.StandardScopes.Email, IdentityServerConstants.StandardScopes.OpenId, IdentityServerConstants.StandardScopes.Profile, IdentityServerConstants.StandardScopes.OfflineAccess, IdentityServerConstants.LocalApi.ScopeName,"roles"},
                 AccessTokenLifetime= 1*60*60,
                 RefreshTokenExpiration= TokenExpiration.Absolute,
                 AbsoluteRefreshTokenLifetime= (int)(DateTime.Now.AddDays(60)-DateTime.Now).TotalSeconds,

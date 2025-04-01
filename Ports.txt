@@ -4,5 +4,6 @@ Services
 	-basketAPI=> 5013
 	-dicountAPI=> 5014
 	-orderAPI=> 5015
+	-fakePaymentAPI=> 5016
 
 -IdentityServer=> 5001
