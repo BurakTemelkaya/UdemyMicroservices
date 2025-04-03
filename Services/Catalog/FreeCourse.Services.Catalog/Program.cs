@@ -37,6 +37,17 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 
 var app = builder.Build();
 
+using var scope = app.Services.CreateScope();
+
+var categoryService = scope.ServiceProvider.GetRequiredService<ICategoryService>();
+
+var categories = await categoryService.GetAllAsync();
+
+if (categories.IsSuccesful && categories.Data!.Count == 0)
+{
+    await categoryService.CreateAsync(new FreeCourse.Services.Catalog.Dtos.CategoryDto { Name = "Android Studio Mobil Uygulama Kursu" });
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
