@@ -43,7 +43,7 @@ var categoryService = scope.ServiceProvider.GetRequiredService<ICategoryService>
 
 var categories = await categoryService.GetAllAsync();
 
-if (categories.IsSuccesful && categories.Data!.Count == 0)
+if (categories.IsSuccessful && categories.Data!.Count == 0)
 {
     await categoryService.CreateAsync(new FreeCourse.Services.Catalog.Dtos.CategoryDto { Name = "Android Studio Mobil Uygulama Kursu" });
 }
