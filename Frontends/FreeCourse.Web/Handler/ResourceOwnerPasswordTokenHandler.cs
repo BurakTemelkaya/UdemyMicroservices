@@ -4,7 +4,6 @@ using FreeCourse.Web.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using System.Net;
-using System.Net.Http;
 using System.Net.Http.Headers;
 
 namespace FreeCourse.Web.Handler;

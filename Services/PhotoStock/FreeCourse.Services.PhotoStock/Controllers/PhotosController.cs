@@ -23,9 +23,7 @@ public class PhotosController : CustomBaseController
 
         await photo.CopyToAsync(stream, cancellationToken);
 
-        string returnPath = "photos/" + photo.FileName;
-
-        PhotoDto photoDto = new() { Url = returnPath };
+        PhotoDto photoDto = new() { Url = photo.FileName };
 
         return CreateActionResultInstance(Response<PhotoDto>.Success(photoDto, StatusCodes.Status201Created));
     }

@@ -58,7 +58,7 @@ public class CoursesController : CustomBaseController
         return CreateActionResultInstance(response);
     }
 
-    [HttpDelete]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(string id)
     {
         Response<NoContent> response = await _courseService.DeleteAsync(id);

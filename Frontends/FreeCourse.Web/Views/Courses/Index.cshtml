@@ -1,0 +1,58 @@
+﻿@{
+    ViewData["Title"] = "Index";
+}
+
+@model List<CourseViewModel>
+
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Kurslar</h5>
+
+                <a asp-controller="Courses" asp-action="Create" class="btn btn-primary mb-3">Kurs Ekle</a>
+
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Resim</th>
+                            <th>Kurs İsim</th>
+                            <th>Fiyat</th>
+                            <th>Süre</th>
+                            <th>Kategori</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    
+                        @if (Model.Any())
+                        {
+                        <tbody>
+                            @foreach (CourseViewModel course in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <img style="width:72px;" src="@course.StockPictureUrl" alt="@course.Name" />
+                                    </td>
+                                    <td>@course.Name</td>
+                                    <td>@course.Price</td>
+                                    <td>@course.Feature.Duration</td>
+                                    <td>@course.Category.Name</td>
+                                    <td>
+                                        <a asp-controller="Courses" asp-action="Update" asp-route-id="@course.Id" class="btn btn-success btn-sm">Güncelle</a>
+                                        <a asp-controller="Courses" asp-action="Delete" asp-route-id="@course.Id" class="btn btn-danger btn-sm">Sil</a>
+                                    </td>
+                                </tr>
+                            }
+                            </tbody>
+                        }
+                        else
+                        {
+                            <div class="alert alert-info">Kayıtlı Kurs Bulunamadı</div>
+                        }
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

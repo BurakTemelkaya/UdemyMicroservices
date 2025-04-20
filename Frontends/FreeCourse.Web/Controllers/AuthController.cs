@@ -1,6 +1,8 @@
 ﻿using FreeCourse.Shared.Dtos;
 using FreeCourse.Web.Models;
 using FreeCourse.Web.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -41,5 +43,12 @@ public class AuthController : Controller
         }
 
         return View();
+    }
+
+    public async Task<IActionResult> Logout()
+    {
+        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        await _identityService.RevokeRefreshTokenAsync();
+        return RedirectToAction(nameof(HomeController.Index),"Home");
     }
 }
