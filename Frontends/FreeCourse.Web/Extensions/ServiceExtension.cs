@@ -16,6 +16,18 @@ public static class ServiceExtension
             throw new Exception("ServiceApiSettings is null");
         }
 
+        services.AddScoped<ClientCredentialTokenHandler>();
+
+        services.AddHttpClient<ICatalogService, CatalogService>(opt =>
+        {
+            opt.BaseAddress = new Uri($"{serviceApiSettings.GatewayBaseUri}/{serviceApiSettings.Catalog.Path}");
+        }).AddHttpMessageHandler<ClientCredentialTokenHandler>();
+
+        services.AddHttpClient<IPhotoStockService, PhotoStockService>(opt =>
+        {
+            opt.BaseAddress = new Uri($"{serviceApiSettings.GatewayBaseUri}/{serviceApiSettings.PhotoStock.Path}");
+        }).AddHttpMessageHandler<ClientCredentialTokenHandler>();
+
         services.AddHttpClient<IIdentityService, IdentityService>();
 
         services.AddHttpClient<IUserService, UserService>(opt =>
@@ -28,16 +40,14 @@ public static class ServiceExtension
             opt.BaseAddress = new Uri($"{serviceApiSettings.GatewayBaseUri}/{serviceApiSettings.Basket.Path}");
         }).AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
 
-        services.AddScoped<ClientCredentialTokenHandler>();
-
-        services.AddHttpClient<ICatalogService, CatalogService>(opt =>
+        services.AddHttpClient<IDiscountService, DiscountService>(opt =>
         {
-            opt.BaseAddress = new Uri($"{serviceApiSettings.GatewayBaseUri}/{serviceApiSettings.Catalog.Path}");
-        }).AddHttpMessageHandler<ClientCredentialTokenHandler>();
+            opt.BaseAddress = new Uri($"{serviceApiSettings.GatewayBaseUri}/{serviceApiSettings.Discount.Path}");
+        }).AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
 
-        services.AddHttpClient<IPhotoStockService, PhotoStockService>(opt =>
+        services.AddHttpClient<IPaymentService, PaymentService>(opt =>
         {
-            opt.BaseAddress = new Uri($"{serviceApiSettings.GatewayBaseUri}/{serviceApiSettings.PhotoStock.Path}");
-        }).AddHttpMessageHandler<ClientCredentialTokenHandler>();
+            opt.BaseAddress = new Uri($"{serviceApiSettings.GatewayBaseUri}/{serviceApiSettings.Payment.Path}");
+        }).AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
     }
 }

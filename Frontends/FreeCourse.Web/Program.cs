@@ -1,10 +1,13 @@
-﻿using FreeCourse.Shared.Services;
+﻿using FluentValidation;
+using FluentValidation.AspNetCore;
+using FreeCourse.Shared.Services;
 using FreeCourse.Web.Extensions;
 using FreeCourse.Web.Handler;
 using FreeCourse.Web.Helpers;
 using FreeCourse.Web.Models;
 using FreeCourse.Web.Services;
 using FreeCourse.Web.Services.Interfaces;
+using FreeCourse.Web.Validators;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,8 +16,17 @@ builder.Services.Configure<ServiceApiSettings>(builder.Configuration.GetSection(
 builder.Services.Configure<ClientSettings>(builder.Configuration.GetSection("ClientSettings"));
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
+});
+
 builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddFluentValidationAutoValidation(opt =>
+{
+    opt.DisableDataAnnotationsValidation = true;
+});
 
 builder.Services.AddScoped<ResourceOwnerPasswordTokenHandler>();
 
@@ -25,6 +37,8 @@ builder.Services.AddHttpClient<IClientCredentialTokenService, ClientCredentialTo
 builder.Services.AddSingleton<PhotoHelper>();
 
 builder.Services.AddMemoryCache();
+
+builder.Services.AddValidatorsFromAssemblyContaining<CourseCreateInputValidator>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
     {

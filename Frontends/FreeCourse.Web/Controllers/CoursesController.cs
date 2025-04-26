@@ -49,7 +49,6 @@ public class CoursesController : Controller
         var result = await _catalogService.CreateCourseAsync(courseCreateInput);
         if (result)
         {
-
             return RedirectToAction(nameof(Index));
         }
 

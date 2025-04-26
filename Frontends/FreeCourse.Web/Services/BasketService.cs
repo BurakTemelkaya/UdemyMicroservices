@@ -1,5 +1,6 @@
 ﻿using FreeCourse.Shared.Dtos;
 using FreeCourse.Web.Models.Baskets;
+using FreeCourse.Web.Models.Discount;
 using FreeCourse.Web.Services.Interfaces;
 
 namespace FreeCourse.Web.Services;
@@ -7,10 +8,12 @@ namespace FreeCourse.Web.Services;
 public class BasketService : IBasketService
 {
     private readonly HttpClient _httpClient;
+    private readonly IDiscountService _discountService;
 
-    public BasketService(HttpClient httpClient)
+    public BasketService(HttpClient httpClient, IDiscountService discountService)
     {
         _httpClient = httpClient;
+        _discountService = discountService;
     }
 
     public async Task AddBasketItemAsync(BasketItemViewModel basketItemViewModel)
@@ -26,26 +29,50 @@ public class BasketService : IBasketService
         }
         else
         {
-            basket = new()
-            {
-                BasketItems =
-                [
-                    basketItemViewModel
-                ]
-            };
+            basket = new();
+            basket.BasketItems.Add(basketItemViewModel);
+        }
 
-            await SaveorUpdateAsync(basket);
-        }     
+        await SaveorUpdateAsync(basket);
     }
 
-    public Task<bool> ApplyDiscountAsync(string discountCode)
+    public async Task<bool> ApplyDiscountAsync(string discountCode)
     {
-        throw new NotImplementedException();
+        await CancelApplyDiscountAsync();
+
+        BasketViewModel basket = await GetAsync();
+
+        if (basket == null)
+        {
+            return false;
+        }
+
+        DiscountViewModel discount = await _discountService.GetDiscountAsync(discountCode);
+
+        if (discount == null)
+        {
+            return false;
+        }
+
+        basket.ApplyDiscount(discount.Code, discount.Rate);
+
+        return await SaveorUpdateAsync(basket);
     }
 
-    public Task<bool> CancelApplyDiscountAsync()
+    public async Task<bool> CancelApplyDiscountAsync()
     {
-        throw new NotImplementedException();
+        BasketViewModel basket = await GetAsync();
+
+        if (basket == null || !basket.HasDiscount)
+        {
+            return false;
+        }
+
+        basket.CancelDiscount();
+
+        bool result = await SaveorUpdateAsync(basket);
+
+        return result;
     }
 
     public async Task<bool> DeleteAsync()
@@ -87,14 +114,12 @@ public class BasketService : IBasketService
             return false;
         }
 
-        if (!basket.BasketItems.Any())
+        if (basket.BasketItems.Count == 0)
         {
             basket.DiscountCode = null;
         }
 
-        await SaveorUpdateAsync(basket);
-
-        return true;
+        return await SaveorUpdateAsync(basket);
     }
 
     public async Task<bool> SaveorUpdateAsync(BasketViewModel basketViewModel)
