@@ -29,20 +29,33 @@ public class OrderController : Controller
     [HttpPost]
     public async Task<IActionResult> Checkout(CheckoutInfoInput checkoutInfoInput)
     {
-        var orderStatus = await _orderService.CreateOrderAsync(checkoutInfoInput);
+        //1. yol senktron iletişim
+        //var orderStatus = await _orderService.CreateOrderAsync(checkoutInfoInput);
 
-        if (!orderStatus.IsSuccessful)
+        //2. yol asenkron iletişim
+        OrderSuspendViewModel orderSuspend = await _orderService.SuspendOrderAsync(checkoutInfoInput);
+
+        if (!orderSuspend.IsSuccessful)
         {
-            ViewBag.Error = orderStatus.Error;
+            ViewBag.Error = orderSuspend.Error;
             return View(checkoutInfoInput);
         }
 
-        return RedirectToAction(nameof(SuccessfulCheckout), new { orderId = orderStatus.OrderId });
+        //1. yol senktron iletişim
+        //return RedirectToAction(nameof(SuccessfulCheckout), new { orderId = orderSuspend.OrderId });
+
+        //2. yol asenkron iletişim
+        return RedirectToAction(nameof(SuccessfulCheckout), new { orderId = new Random().Next(1, 1000) });
     }
 
     public IActionResult SuccessfulCheckout(int orderId)
     {
         ViewBag.orderId = orderId;
         return View();
+    }
+
+    public async Task<IActionResult> CheckoutHistory()
+    {
+        return View(await _orderService.GetOrderAsync());
     }
 }

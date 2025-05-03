@@ -1,5 +1,7 @@
+﻿using FreeCourse.Services.Order.Application.Consumers;
 using FreeCourse.Services.Order.Infrastructure;
 using FreeCourse.Shared.Services;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -9,6 +11,26 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 AuthorizationPolicy requireAuthorizePolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+
+builder.Services.AddMassTransit(x =>
+{
+    x.AddConsumer<CreateOrderMessageCommandConsumer>();
+
+    // Default port : 5672
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host(builder.Configuration["RabbitMQUrl"], "/", host =>
+        {
+            host.Username("guest");//default username password verildi
+            host.Password("guest");
+        });
+
+        cfg.ReceiveEndpoint("create-order-service", e =>
+        {
+            e.ConfigureConsumer<CreateOrderMessageCommandConsumer>(context);
+        });
+    });
+});
 
 builder.Services.AddControllers(opt =>
 {
@@ -37,7 +59,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     options.Authority = builder.Configuration["IdentityServerUrl"];
     options.Audience = "resource_order";
     options.RequireHttpsMetadata = false;
-    options.MapInboundClaims = false;//Sub(UserId) Claimin maplemesini engellemek i�in
+    options.MapInboundClaims = false;//Sub(UserId) Claimin maplemesini engellemek için
 });
 
 var app = builder.Build();

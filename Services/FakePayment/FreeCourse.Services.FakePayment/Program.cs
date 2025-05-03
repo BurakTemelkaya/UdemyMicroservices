@@ -1,6 +1,7 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using MassTransit;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +22,20 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     options.Authority = builder.Configuration["IdentityServerUrl"];
     options.Audience = "resource_payment";
     options.RequireHttpsMetadata = false;
-    options.MapInboundClaims = false;//Sub(UserId) Claimin maplemesini engellemek i�in
+    options.MapInboundClaims = false;//Sub(UserId) Claimin maplemesini engellemek için
+});
+
+builder.Services.AddMassTransit(x =>
+{
+    // Default port : 5672
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host(builder.Configuration["RabbitMQUrl"], "/", host =>
+        {
+            host.Username("guest");//default username password verildi
+            host.Password("guest");
+        });
+    });
 });
 
 var app = builder.Build();

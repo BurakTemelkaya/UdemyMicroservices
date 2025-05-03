@@ -102,8 +102,63 @@ public class OrderService : IOrderService
         return response.Data;
     }
 
-    public async Task SuspendOrderAsync(CheckoutInfoInput checkoutInfoInput)
+    public async Task<OrderSuspendViewModel> SuspendOrderAsync(CheckoutInfoInput checkoutInfoInput)
     {
-        throw new NotImplementedException();
+        BasketViewModel basket = await _basketService.GetAsync();
+
+        OrderCreateInput orderCreateInput = new()
+        {
+            BuyerId = _sharedIdentityService.GetUserId,
+            Address = new AddressCreateInput
+            {
+                Province = checkoutInfoInput.Province,
+                District = checkoutInfoInput.District,
+                Street = checkoutInfoInput.Street,
+                ZipCode = checkoutInfoInput.ZipCode,
+                Line = checkoutInfoInput.Line,
+            },
+        };
+
+        basket.BasketItems.ForEach(x =>
+        {
+            OrderItemCreateInput orderItem = new()
+            {
+                ProductId = x.CourseId,
+                Price = x.GetCurrentPrice,
+                PictureUrl = string.Empty,
+                ProductName = x.CourseName,
+            };
+
+            orderCreateInput.OrderItems.Add(orderItem);
+        });    
+
+        PaymentInfoInput paymentInfoInput = new()
+        {
+            CardName = checkoutInfoInput.CardName,
+            CardNumber = checkoutInfoInput.CardNumber,
+            Expiration = checkoutInfoInput.Expiration,
+            CVV = checkoutInfoInput.CVV,
+            TotalPrice = basket.TotalPrice,
+            Order = orderCreateInput,
+        };
+
+        bool responsePayment = await _paymentService.ReceivePaymentAsync(paymentInfoInput);
+
+        if (!responsePayment)
+        {
+            return new OrderSuspendViewModel
+            {
+                Error = "Sipariş oluşturulamadı.",
+                IsSuccessful = false,
+            };
+        }
+
+        //sepeti sil
+        await _basketService.DeleteAsync();
+
+        return new OrderSuspendViewModel
+        {
+            IsSuccessful = true,
+        };
     }
 }
