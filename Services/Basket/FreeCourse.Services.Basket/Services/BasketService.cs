@@ -34,6 +34,7 @@ public class BasketService : IBasketService
 
         return Response<bool>.Success(status, StatusCodes.Status204NoContent);
     }
+
     public async Task<Response<bool>> DeleteAsync(string userId)
     {
         bool status = await _redisService.GetDb().KeyDeleteAsync(userId);
@@ -45,4 +46,22 @@ public class BasketService : IBasketService
 
         return Response<bool>.Success(status, StatusCodes.Status204NoContent);
     }
+
+    public async Task<Response<ICollection<BasketDto>>> GetAllBasketAsync()
+    {
+        var data = await _redisService.GetAllKeyValuesAsync();
+
+        if (data == null || data.Count == 0)
+        {
+            return Response<ICollection<BasketDto>>.Fail("Basket not found", StatusCodes.Status404NotFound);
+        }
+
+        var basketList = data.Values
+            .Select(json => JsonSerializer.Deserialize<BasketDto>(json))
+            .Where(dto => dto != null)
+            .ToList();
+
+        return Response<ICollection<BasketDto>>.Success(basketList!, StatusCodes.Status200OK);
+    }
+
 }

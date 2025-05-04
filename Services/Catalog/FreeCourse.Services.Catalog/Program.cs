@@ -1,5 +1,6 @@
-using FreeCourse.Services.Catalog.Services;
+﻿using FreeCourse.Services.Catalog.Services;
 using FreeCourse.Services.Catalog.Settings;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Options;
@@ -33,6 +34,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     options.Authority = builder.Configuration["IdentityServerUrl"];
     options.Audience = "resource_catalog";
     options.RequireHttpsMetadata = false;
+});
+
+builder.Services.AddMassTransit(x =>
+{
+    // Default port : 5672
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host(builder.Configuration["RabbitMQUrl"], "/", host =>
+        {
+            host.Username("guest");//default username password verildi
+            host.Password("guest");
+        });
+    });
 });
 
 var app = builder.Build();

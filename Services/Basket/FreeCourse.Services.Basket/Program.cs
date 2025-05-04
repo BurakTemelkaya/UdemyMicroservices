@@ -1,12 +1,34 @@
+﻿using FreeCourse.Services.Basket.Consumers;
 using FreeCourse.Services.Basket.Services;
 using FreeCourse.Services.Basket.Settings;
 using FreeCourse.Shared.Services;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddMassTransit(x =>
+{
+    x.AddConsumer<CourseNameChangeEventConsumer>();
+
+    // Default port : 5672
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host(builder.Configuration["RabbitMQUrl"], "/", host =>
+        {
+            host.Username("guest");//default username password verildi
+            host.Password("guest");
+        });
+
+        cfg.ReceiveEndpoint("course-name-changed-event-order-service", e =>
+        {
+            e.ConfigureConsumer<CourseNameChangeEventConsumer>(context);
+        });
+    });
+});
 
 // Add services to the container.
 AuthorizationPolicy requireAuthorizePolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
@@ -24,7 +46,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     options.Authority = builder.Configuration["IdentityServerUrl"];
     options.Audience = "resource_basket";
     options.RequireHttpsMetadata = false;   
-    options.MapInboundClaims = false;//Sub(UserId) Claimin maplemesini engellemek i�in
+    options.MapInboundClaims = false;//Sub(UserId) Claimin maplemesini engellemek için
 });
 
 builder.Services.Configure<RedisSettings>(builder.Configuration.GetSection("RedisSettings"));
@@ -42,7 +64,6 @@ builder.Services.AddSingleton<RedisService>(sp =>
     redisService.Connect();
     return redisService;
 });
-
 
 var app = builder.Build();
 

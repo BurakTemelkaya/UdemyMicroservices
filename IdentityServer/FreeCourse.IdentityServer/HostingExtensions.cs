@@ -1,4 +1,4 @@
-using Duende.IdentityServer;
+﻿using Duende.IdentityServer;
 using Duende.IdentityServer.Validation;
 using FreeCourse.IdentityServer.Data;
 using FreeCourse.IdentityServer.Models;
@@ -42,6 +42,8 @@ internal static class HostingExtensions
             .AddLicenseSummary();
 
         builder.Services.AddTransient<IResourceOwnerPasswordValidator, IdentityResourceOwnerPasswordValidator>();
+
+        builder.Services.AddTransient<IExtensionGrantValidator, TokenExchangeExtensionGrantValidator>();
 
         builder.Services.AddAuthentication()
             .AddGoogle(options =>

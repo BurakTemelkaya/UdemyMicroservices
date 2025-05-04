@@ -1,6 +1,5 @@
 ﻿using FreeCourse.Web.Models;
 using FreeCourse.Web.Services.Interfaces;
-using Duende.AccessTokenManagement;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Caching.Memory;
 using Duende.IdentityModel.Client;

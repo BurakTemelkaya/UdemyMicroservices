@@ -6,6 +6,7 @@ namespace FreeCourse.Services.Basket.Services;
 public interface IBasketService
 {
     Task<Response<BasketDto>> GetBasketAsync(string userId);
+    Task<Response<ICollection<BasketDto>>> GetAllBasketAsync();
     Task<Response<bool>> SaveOrUpdateAsync(BasketDto basketDto);
     Task<Response<bool>> DeleteAsync(string userId);
 }

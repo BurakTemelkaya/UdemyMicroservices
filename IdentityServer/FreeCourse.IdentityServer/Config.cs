@@ -1,4 +1,4 @@
-using Duende.IdentityServer;
+ï»¿using Duende.IdentityServer;
 using Duende.IdentityServer.Models;
 
 namespace FreeCourse.IdentityServer;
@@ -25,20 +25,20 @@ public static class Config
             new IdentityResource(){
                 Name="roles",
                 DisplayName="Roles",
-                Description="Kullanýcý rolleri",
+                Description="KullanÄ±cÄ± rolleri",
                 UserClaims=["role"]
             }
         ];
 
     public static IEnumerable<ApiScope> ApiScopes =>
         [
-            new("catalog_fullpermission", "Catalog API için full eriþim"),
-            new("photo_stock_fullpermission", "Photo Stock API için full eriþim"),
-            new("basket_fullpermission", "Basket API için full eriþim"),
-            new("discount_fullpermission", "Discount API için full eriþim"),
-            new("order_fullpermission", "Order API için full eriþim"),
-            new("payment_fullpermission", "Payment API için full eriþim"),
-            new("gateway_fullpermission", "Gateway API için full eriþim"),
+            new("catalog_fullpermission", "Catalog API iÃ§in full eriÅŸim"),
+            new("photo_stock_fullpermission", "Photo Stock API iÃ§in full eriÅŸim"),
+            new("basket_fullpermission", "Basket API iÃ§in full eriÅŸim"),
+            new("discount_fullpermission", "Discount API iÃ§in full eriÅŸim"),
+            new("order_fullpermission", "Order API iÃ§in full eriÅŸim"),
+            new("payment_fullpermission", "Payment API iÃ§in full eriÅŸim"),
+            new("gateway_fullpermission", "Gateway API iÃ§in full eriÅŸim"),
             new(IdentityServerConstants.LocalApi.ScopeName),
         ];
 
@@ -57,11 +57,18 @@ public static class Config
                 AllowOfflineAccess = true,
                 ClientSecrets= { new Secret("secret".Sha256()) },
                 AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
-                AllowedScopes = {"basket_fullpermission", "discount_fullpermission", "order_fullpermission", "payment_fullpermission", "gateway_fullpermission", IdentityServerConstants.StandardScopes.Email, IdentityServerConstants.StandardScopes.OpenId, IdentityServerConstants.StandardScopes.Profile, IdentityServerConstants.StandardScopes.OfflineAccess, IdentityServerConstants.LocalApi.ScopeName,"roles"},
+                AllowedScopes = {"basket_fullpermission", "order_fullpermission", "gateway_fullpermission", IdentityServerConstants.StandardScopes.Email, IdentityServerConstants.StandardScopes.OpenId, IdentityServerConstants.StandardScopes.Profile, IdentityServerConstants.StandardScopes.OfflineAccess, IdentityServerConstants.LocalApi.ScopeName,"roles"},
                 AccessTokenLifetime= 1*60*60,
                 RefreshTokenExpiration= TokenExpiration.Absolute,
                 AbsoluteRefreshTokenLifetime= (int)(DateTime.Now.AddDays(60)-DateTime.Now).TotalSeconds,
                 RefreshTokenUsage= TokenUsage.ReUse
-            }
+            },
+            new(){
+                ClientName = "Token Exchange Client",
+                ClientId = "TokenExchangeClient",
+                ClientSecrets= { new Secret("secret".Sha256()) },
+                AllowedGrantTypes = ["urn:ietf:params:oauth:grant-type:token-exchange"],
+                AllowedScopes = { "discount_fullpermission","payment_fullpermission" , IdentityServerConstants.StandardScopes.OpenId},
+            },
         ];
 }
