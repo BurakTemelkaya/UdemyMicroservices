@@ -1,6 +1,12 @@
-﻿namespace FreeCourse.Shared.Dtos;
+﻿using System.Collections.Generic;
 
-public class ErrorDto
+namespace FreeCourse.Shared.Dtos
 {
-    public List<string> Errors { get; set; }
+    public class ErrorDto
+    {
+        public List<string> Errors { get; set; }
+
+
+
+    }
 }

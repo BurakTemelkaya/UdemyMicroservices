@@ -2,8 +2,7 @@
 using FreeCourse.Web.Services.Interfaces;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Caching.Memory;
-using Duende.IdentityModel.Client;
-using System.Net.Http;
+using IdentityModel.Client;
 
 namespace FreeCourse.Web.Services;
 

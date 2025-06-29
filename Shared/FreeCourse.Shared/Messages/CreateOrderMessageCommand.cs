@@ -1,21 +1,35 @@
-﻿namespace FreeCourse.Shared.Messages;
+﻿using System;
+using System.Collections.Generic;
 
-public class CreateOrderMessageCommand
+namespace FreeCourse.Shared.Messages
 {
-    public string BuyerId { get; set; }
+    //FakePayment mesajı gönderen => mesajı alan Order. Command 'i oluşturuyoruz.
+    public class CreateOrderMessageCommand
+    {
+        public CreateOrderMessageCommand()
+        {
+            OrderItems = new List<OrderItem>();
+        }
 
-    public List<OrderItem> OrderItems { get; set; }
-    public string Province { get; set; }
-    public string District { get; set; }
-    public string Street { get; set; }
-    public string ZipCode { get; set; }
-    public string Line { get; set; }
-}
+        public string BuyerId { get; set; }
+        public List<OrderItem> OrderItems { get; set; }
 
-public class OrderItem
-{
-    public string ProductId { get; set; }
-    public string ProductName { get; set; }
-    public string PictureUrl { get; set; }
-    public decimal Price { get; set; }
+        //Address Dto ya karşılık olarak aşağıdaki propertyleri tanımladık.
+        public string Province { get; set; }
+        public string District { get; set; }
+        public string Street { get; set; }
+        public string ZipCode { get; set; }
+        public string Line { get; set; }
+    }
+
+    //Order.Api deki OrderController bizden ne bekliyorsa onu oluşturuyoruz.
+    public class OrderItem
+    {
+        public string ProductId { get; set; }
+        public string ProductName { get; set; }
+        public string PictureUrl { get; set; }
+        public Decimal Price { get; set; }
+    }
+
+
 }

@@ -1,15 +1,22 @@
 ﻿using FreeCourse.Shared.Dtos;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FreeCourse.Shared.ControllerBases;
-
-public class CustomBaseController : ControllerBase
+namespace FreeCourse.Shared.ControllerBases
 {
-    public IActionResult CreateActionResultInstance<T>(Response<T> response)
+    //Bu CustomBaseController sınıfını controller içerisinde response modeli için kullanacağız.
+    public class CustomBaseController : ControllerBase
     {
-        return new ObjectResult(response)
+        public IActionResult CreateActionResultInstance<T>(Response<T> response)
         {
-            StatusCode = response.StatusCode
-        };
+            return new ObjectResult(response)
+            {
+                StatusCode = response.StatusCode,
+
+            };
+
+        }
+
+
+
     }
 }

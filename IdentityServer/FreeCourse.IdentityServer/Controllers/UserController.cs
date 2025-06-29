@@ -1,64 +1,69 @@
 ﻿using FreeCourse.IdentityServer.Dtos;
 using FreeCourse.IdentityServer.Models;
+using FreeCourse.Shared.ControllerBases;
 using FreeCourse.Shared.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.IdentityModel.Tokens.Jwt;
-using static Duende.IdentityServer.IdentityServerConstants;
+using Microsoft.IdentityModel.JsonWebTokens;
+using System.Linq;
+using System.Threading.Tasks;
+using static IdentityServer4.IdentityServerConstants;
 
-namespace FreeCourse.IdentityServer.Controllers;
-
-[Authorize(LocalApi.PolicyName)]
-[Route("api/[controller]/[action]")]
-[ApiController]
-public class UserController : ControllerBase
+namespace FreeCourse.IdentityServer.Controllers
 {
-    private readonly UserManager<ApplicationUser> _userManager;
-
-    public UserController(UserManager<ApplicationUser> userManager)
+    //Identity Server static classdan yararlanarak Authorization veriyoruz.Claim bazlı startup tarafında eklenen metot sayesinde biz PolicyName kullanarak autorize işlemini gerçekleştirdik.
+    [Authorize(LocalApi.PolicyName)]
+    [Route("api/[controller]/[action]")]
+    [ApiController]
+    public class UserController : CustomBaseController
     {
-        _userManager = userManager;
-    }
-
-
-    [HttpPost]
-    public async Task<IActionResult> SignUp(SignUpDto signUpDto)
-    {
-        ApplicationUser user = new()
+        private readonly UserManager<ApplicationUser> _userManager;
+        public UserController(UserManager<ApplicationUser> userManager)
         {
-            UserName = signUpDto.UserName,
-            Email = signUpDto.Email,
-            City = signUpDto.City
-        };
-
-        IdentityResult result = await _userManager.CreateAsync(user, signUpDto.Password);
-
-        if (!result.Succeeded)
-        {
-            return BadRequest(Response<NoContent>.Fail([.. result.Errors.Select(x => x.Description)], StatusCodes.Status400BadRequest));
+            _userManager = userManager;
         }
 
-        return NoContent();
-    }
-
-    [HttpGet]
-    public async Task<IActionResult> GetUser()
-    {
-        string? userId = User.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Sub)?.Value;
-
-        if (userId == null)
+        [HttpPost]
+        public async Task<IActionResult> SignUp(SignUpDto signUpDto)
         {
-            return BadRequest();
+            var user = new ApplicationUser
+            {
+                UserName = signUpDto.UserName,
+                Email = signUpDto.Email,
+                City = signUpDto.City
+            };
+            var result = await _userManager.CreateAsync(user, signUpDto.Password);
+
+            if (!result.Succeeded)
+            {
+                return CreateActionResultInstance(Response<NoContent>.Fail(result.Errors.Select(x => x.Description).ToList(), 400));
+            }
+            return CreateActionResultInstance(Response<NoContent>.Success(204));
         }
 
-        ApplicationUser? user = await _userManager.FindByIdAsync(userId);
-
-        if (user == null)
+        [HttpGet]
+        public async Task<IActionResult> GetUser()
         {
-            return BadRequest();
+            var userIdClaim = User.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Sub);
+
+            if (userIdClaim == null) return CreateActionResultInstance(Response<NoContent>.Fail("Claim not found!", 400));
+
+            var user = await _userManager.FindByIdAsync(userIdClaim.Value);
+
+            if (user == null) return CreateActionResultInstance(Response<NoContent>.Fail("User not found!", 400));
+
+            var userDto = new UserForClientDto { Id = user.Id, UserName = user.UserName, Email = user.Email, City = user.City };
+            //Bu şekilde yazınca Mvc tarafı tanımıyor.
+            return CreateActionResultInstance(Response<UserForClientDto>.Success(userDto, 200));
+
+            //return Ok(new { Id = user.Id, UserName = user.UserName, Email = user.Email, City = user.City });
+
         }
 
-        return Ok(new { Id = user.Id, UserName = user.UserName, Email = user.Email, City = user.City });
+
+
+
+
     }
 }

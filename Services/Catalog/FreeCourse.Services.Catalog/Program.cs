@@ -46,6 +46,9 @@ builder.Services.AddMassTransit(x =>
             host.Username("guest");//default username password verildi
             host.Password("guest");
         });
+
+        cfg.UseDelayedRedelivery(r => r.Intervals(TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(10)));
+        cfg.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
     });
 });
 

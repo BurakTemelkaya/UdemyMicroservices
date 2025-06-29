@@ -1,5 +1,6 @@
 ﻿
-using Duende.IdentityModel.Client;
+
+using IdentityModel.Client;
 
 namespace FreeCourse.Gateway.DelegateHandlers;
 

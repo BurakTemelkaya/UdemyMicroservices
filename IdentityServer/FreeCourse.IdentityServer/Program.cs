@@ -1,103 +1,88 @@
-using System.Globalization;
-using System.Text;
-using Duende.IdentityServer.Licensing;
-using FreeCourse.IdentityServer;
+﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+
 using FreeCourse.IdentityServer.Data;
 using FreeCourse.IdentityServer.Models;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Serilog;
+using Serilog.Events;
+using Serilog.Sinks.SystemConsole.Themes;
+using System;
+using System.Linq;
 
-Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture)
-    .CreateBootstrapLogger();
-
-Log.Information("Starting up");
-
-try
+namespace FreeCourse.IdentityServer
 {
-    var builder = WebApplication.CreateBuilder(args);
-
-    builder.Host.UseSerilog((ctx, lc) => lc
-        .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", formatProvider: CultureInfo.InvariantCulture)
-        .Enrich.FromLogContext()
-        .ReadFrom.Configuration(ctx.Configuration));
-
-    var app = builder
-        .ConfigureServices()
-        .ConfigurePipeline();
-
-    // this seeding is only for the template to bootstrap the DB and users.
-    // in production you will likely want a different approach.
-    if (args.Contains("/seed"))
+    public class Program
     {
-        Log.Information("Seeding database...");
-        SeedData.EnsureSeedData(app);
-        Log.Information("Done seeding database. Exiting.");
-        return;
-    }
-
-    using (var scope = app.Services.CreateScope())
-    {
-        var serviceProvider = scope.ServiceProvider;
-
-        var applicationDbContext = serviceProvider.GetRequiredService<ApplicationDbContext>();
-
-        applicationDbContext.Database.Migrate();
-
-        var usermanager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-
-        if (!usermanager.Users.Any())
+        public static int Main(string[] args)
         {
-            var result = await usermanager.CreateAsync(new()
-            {
-                UserName = "BurakTemelkaya",
-                Email = "temelkayaburak@gmail.com",
-                City = "�stanbul"
-            },
-            "Test123!");
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
+                .MinimumLevel.Override("System", LogEventLevel.Warning)
+                .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
+                .Enrich.FromLogContext()
+                // uncomment to write to Azure diagnostics stream
+                //.WriteTo.File(
+                //    @"D:\home\LogFiles\Application\identityserver.txt",
+                //    fileSizeLimitBytes: 1_000_000,
+                //    rollOnFileSizeLimit: true,
+                //    shared: true,
+                //    flushToDiskInterval: TimeSpan.FromSeconds(1))
+                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", theme: AnsiConsoleTheme.Code)
+                .CreateLogger();
 
-            if (!result.Succeeded)
+            try
             {
-                foreach (var error in result.Errors)
+                var host = CreateHostBuilder(args).Build();
+
+                //Migrationların otomatik olarak oluşması için aşağıdaki düzenlemeleri yaptık. Using kullanıyoruzki işlem bittiğinde memoryden düşmesi için.
+                using (var scope = host.Services.CreateScope())
                 {
-                    Log.Fatal(error.Description, error.Code);
+                    var serviceProvider = scope.ServiceProvider;
+
+                    var applicationDbContext = serviceProvider.GetRequiredService<ApplicationDbContext>();
+                    //Veritabanına yaptığımız migrationları yansıtacağız. Daha uygulama ayağa kalkerken.update-database komutunu unutabileceğimiz durumlarda oldukça faydalıdır.
+                    applicationDbContext.Database.Migrate();
+
+                    //Eğer kullanıcı yok ise kullanıcı oluşturması için aşağıda UserManager nesnesini türettik.
+                    var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+                    if (!userManager.Users.Any())
+                    {
+                        //Database de kullanıcı yok ise default olarak aşağıdaki kullanıcıyı ekliyoruz. Wait ile senkrona çevirdik.
+                        userManager.CreateAsync(new ApplicationUser { UserName = "sallifatih34", Email = "mimsallifatih@gmail.com", City = "Istanbul", }, "Password12*").Wait();
+                    }
+
                 }
+
+                Log.Information("Starting host...");
+                host.Run();
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal(ex, "Host terminated unexpectedly.");
+                return 1;
+            }
+            finally
+            {
+                Log.CloseAndFlush();
             }
         }
+
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .UseSerilog()
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
     }
-
-    if (app.Environment.IsDevelopment())
-    {
-        app.Lifetime.ApplicationStopping.Register(() =>
-        {
-            var usage = app.Services.GetRequiredService<LicenseUsageSummary>();
-            Console.Write(Summary(usage));
-            Console.ReadKey();
-        });
-    }
-
-    app.Run();
-}
-catch (Exception ex) when (ex is not HostAbortedException)
-{
-    Log.Fatal(ex, "Unhandled exception");
-}
-finally
-{
-    Log.Information("Shut down complete");
-    Log.CloseAndFlush();
-}
-
-static string Summary(LicenseUsageSummary usage)
-{
-    var sb = new StringBuilder();
-    sb.AppendLine("IdentityServer Usage Summary:");
-    sb.AppendLine(CultureInfo.InvariantCulture, $"  License: {usage.LicenseEdition}");
-    var features = usage.FeaturesUsed.Count > 0 ? string.Join(", ", usage.FeaturesUsed) : "None";
-    sb.AppendLine(CultureInfo.InvariantCulture, $"  Business and Enterprise Edition Features Used: {features}");
-    sb.AppendLine(CultureInfo.InvariantCulture, $"  {usage.ClientsUsed.Count} Client Id(s) Used");
-    sb.AppendLine(CultureInfo.InvariantCulture, $"  {usage.IssuersUsed.Count} Issuer(s) Used");
-
-    return sb.ToString();
 }

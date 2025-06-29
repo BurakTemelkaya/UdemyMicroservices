@@ -1,5 +1,7 @@
-﻿namespace FreeCourse.Shared.Dtos;
-
-public class NoContent
+﻿namespace FreeCourse.Shared.Dtos
 {
+    public class NoContent
+    {
+
+    }
 }

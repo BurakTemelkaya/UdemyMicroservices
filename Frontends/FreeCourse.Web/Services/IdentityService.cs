@@ -1,7 +1,7 @@
-﻿using Duende.IdentityModel.Client;
-using FreeCourse.Shared.Dtos;
+﻿using FreeCourse.Shared.Dtos;
 using FreeCourse.Web.Models;
 using FreeCourse.Web.Services.Interfaces;
+using IdentityModel.Client;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Options;

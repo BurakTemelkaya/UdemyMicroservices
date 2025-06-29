@@ -1,6 +1,6 @@
-﻿using Duende.IdentityModel.Client;
-using FreeCourse.Web.Exceptions;
+﻿using FreeCourse.Web.Exceptions;
 using FreeCourse.Web.Services.Interfaces;
+using IdentityModel.Client;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using System.Net;
