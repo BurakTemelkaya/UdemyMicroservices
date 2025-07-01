@@ -98,7 +98,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - IdentityServerUrl=http://identityserver.api
-      - "ConnectionStrings:PostgreSql=Server=discountdb; Port=5432; User Id=admin; Password=Test123!; Database=discount;"
+      - "ConnectionStrings:PostgreSql=User ID=admin;Password=Password12*;Server=discountdb;Port=5432;Database=discountdb;Pooling=true;"
     ports:
       - "5014:8080"
     depends_on:
@@ -118,7 +118,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - IdentityServerUrl=http://identityserver.api
       - RabbitMQUrl=rabbitmq
-      - "ConnectionStrings:DefaultConnection=Server=orderdb,1444;Database=OrderDb;User Id=sa;Password=Password12*;TrustServerCertificate=True;"
+      - "ConnectionStrings:DefaultConnection=Server=orderdb,1433;Database=OrderDb;User Id=sa;Password=Password12*;TrustServerCertificate=True;TrustServerCertificate=True;"
     ports:
       - "5015:8080"
     depends_on:

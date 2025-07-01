@@ -48,7 +48,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<OrderDbContext>(opt =>
 {
-    opt.UseSqlServer(builder.Configuration["DefaultConnection"], configure =>
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), configure =>
     {
         configure.MigrationsAssembly("FreeCourse.Services.Order.Infrastructure");
     });
@@ -70,12 +70,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var dbContext = scope.ServiceProvider.GetRequiredService<OrderDbContext>();
-    dbContext.Database.Migrate();
-}
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -87,5 +81,11 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<OrderDbContext>();
+    dbContext.Database.Migrate();
+}
 
 app.Run();
