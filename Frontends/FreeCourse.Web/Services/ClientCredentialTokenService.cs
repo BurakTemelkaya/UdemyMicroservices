@@ -25,9 +25,9 @@ public class ClientCredentialTokenService : IClientCredentialTokenService
 
     public async Task<string> GetTokenAsync()
     {
-        if (_memoryCache.TryGetValue(TokenCacheKey, out string accessToken))
+        if (_memoryCache.TryGetValue(TokenCacheKey, out string? accessToken))
         {
-            return accessToken;
+            return accessToken!;
         }
 
         DiscoveryDocumentResponse disco = await _httpClient.GetDiscoveryDocumentAsync(new DiscoveryDocumentRequest
@@ -35,14 +35,32 @@ public class ClientCredentialTokenService : IClientCredentialTokenService
             Address = _serviceApiSettings.IdentityBaseUri,
             Policy = new DiscoveryPolicy
             {
-                RequireHttps = false
+                RequireHttps = false,
+                ValidateIssuerName = false
             }
         });
 
+        if (disco == null)
+        {
+            throw new Exception($"disco is empty");
+        }
+
         if (disco.IsError)
         {
-            throw disco.Exception!;
+            var errorDetails = $"""
+                Discovery error:
+                - ErrorType: {disco.ErrorType}
+                - Error: {disco.Error}
+                - StatusCode: {disco.HttpStatusCode}
+                - Raw: {disco.Raw}
+            """;
+
+            // Log veya Exception fırlat
+            
+
+            throw disco.Exception ?? throw new Exception(errorDetails);
         }
+
 
         ClientCredentialsTokenRequest clientCredentialTokenRequest = new ClientCredentialsTokenRequest
         {

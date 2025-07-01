@@ -22,7 +22,7 @@ public class ClientCredentialTokenHandler : DelegatingHandler
 
         if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
-            throw new UnAuthorizeException();
+            throw new UnAuthorizeException(request.Headers.Authorization + " "+ response.Content.ToString() + "" + response.RequestMessage);
         }
 
         return response;
